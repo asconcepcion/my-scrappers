@@ -823,7 +823,7 @@ class MultiSourceMonitor:
             
             # Check if source should run today
             if not source.should_run_today():
-                print(f"[i] Skipping {source.name} (not scheduled for today)")
+                self.notification_manager.send_message(f"AUTOMATIZACIÓN EP: Skipping {source.name} (not scheduled for today)", "Nothing to show")
                 return
             
             # Get URLs to scrape
@@ -843,7 +843,7 @@ class MultiSourceMonitor:
             
             # Get metadata
             metadata = source.get_metadata()
-            metadata['urls'] = urls[:3]  # Include first 3 URLs
+            metadata['urls'] = urls
             
             # Send notification
             subject = f"AUTOMATIZACIÓN EP: {source.name}"
@@ -876,8 +876,8 @@ class MultiSourceMonitor:
         sources_skipped = 0
         
         for source in self.sources:
+            self.process_source(source)
             if source.should_run_today():
-                self.process_source(source)
                 sources_processed += 1
             else:
                 sources_skipped += 1
