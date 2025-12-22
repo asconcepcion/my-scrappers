@@ -19,7 +19,10 @@ URLS = [
     "https://www.gobiernodecanarias.org/administracionespublicas/funcionpublica/acceso/anuncios_resoluciones_comunicados/",
     "https://www.gobiernodecanarias.org/administracionespublicas/funcionpublica/acceso/convocatorias-en-curso/2024/Acceso_libre/ficha/TELECOMUNICACIONES-Turno-Libre/",
     "https://cabildo.grancanaria.com/ciu/empleo-publico?articleId=3845204",
-    "https://cabildo.grancanaria.com/ciu/empleo-publico?articleId=303825"
+    "https://cabildo.grancanaria.com/ciu/empleo-publico?articleId=303825",
+    "https://cabildo.grancanaria.com/ciu/empleo-publico?articleId=7379791",
+    "https://cabildo.grancanaria.com/ciu/empleo-publico?articleId=7409350",
+    "https://cabildo.grancanaria.com/ciu/empleo-publico?articleId=7409430"
 ]
 
 URL_TITLES = [
@@ -27,7 +30,10 @@ URL_TITLES = [
     "Funcion Pública Gobierno de Canarias: Anuncios y Comunicados",
     "Gobierno de Canarias: Teleco A2 2024",
     "Cabildo de Gran Canaria: Teleco 2025",
-    "Cabildo de Gran Canaria: Bolsa Empleo Técnico Superior Informático 2025"
+    "Cabildo de Gran Canaria: Bolsa Empleo Técnico Superior Informático 2025",
+    "Cabildo de Gran Canaria: Opos Técnico Superior Informático 2025",
+    "Cabildo de Gran Canaria: B.E. (méritos) Técnico Superior Informática 2025",
+    "Cabildo de Gran Canaria: B.E. (méritos) Técnico Medio Informática 2025"
 ]
 
 
