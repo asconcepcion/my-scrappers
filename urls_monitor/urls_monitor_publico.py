@@ -15,27 +15,19 @@ from typing import Dict, Optional
 
 # URLs a monitorear
 URLS = [
-    "https://www.sodetegc.org/conocenos/informacion-administrativa/empleo/",
-    "https://asistacanarias.org/portal/trabaja-con-nosotros",
-    "https://www.itccanarias.org/web/es/empleo",
     "https://www.gobiernodecanarias.org/administracionespublicas/funcionpublica/",
     "https://www.gobiernodecanarias.org/administracionespublicas/funcionpublica/acceso/anuncios_resoluciones_comunicados/",
     "https://www.gobiernodecanarias.org/administracionespublicas/funcionpublica/acceso/convocatorias-en-curso/2024/Acceso_libre/ficha/TELECOMUNICACIONES-Turno-Libre/",
     "https://cabildo.grancanaria.com/ciu/empleo-publico?articleId=3845204",
-    "https://cabildodelanzarote.convoca.online/processDetail.html?id=08641046-d692-4f7f-bce9-08daff7f4873&type=0",
-    "https://www3.gobiernodecanarias.org/sanidad/scs/contenidoGenerico.jsp?idDocument=0de977ff-8e1f-11f0-ab16-39979cd2dfcc&idCarpeta=b8cf85ba-fc1a-11dd-a72f-93771b0e33f6"
+    "https://cabildo.grancanaria.com/ciu/empleo-publico?articleId=303825"
 ]
 
 URL_TITLES = [
-    "SodeteGC",
-    "Asista",
-    "ITCCanarias",
-    "Función Pública Gobierno de Canarias",
-    "Función Pública Gobierno de Canarias: Anuncios y Comunicados",
-    "Gobierno de Canarias: Teleco A2",
-    "Cabildo de Gran Canaria: Teleco A1 2025",
-    "Cabildo Lanzarote: Teleco A1",
-    "SCS: OPE 2016-17-18: General"
+    "Funcion Pública Gobierno de Canarias",
+    "Funcion Pública Gobierno de Canarias: Anuncios y Comunicados",
+    "Gobierno de Canarias: Teleco A2 2024",
+    "Cabildo de Gran Canaria: Teleco 2025",
+    "Cabildo de Gran Canaria: Bolsa Empleo Técnico Superior Informático 2025"
 ]
 
 
