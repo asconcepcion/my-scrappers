@@ -350,6 +350,10 @@ def main(output_root_dir: str):
         body = ''
         changes_detected = False
         change_details = []
+        changed_pages = []  # Lista de páginas que han cambiado
+        first_time_pages = []  # Lista de páginas en primera monitorización
+        error_pages = []  # Lista de páginas con errores
+        unchanged_pages = 0  # Contador de páginas sin cambios
         
         for url, url_title in zip(URLS, URL_TITLES):
             body += f"----------{url_title}----------<br>"
@@ -372,15 +376,18 @@ def main(output_root_dir: str):
             
             if not current_hash:
                 body += "Error al descargar contenido<br>"
+                error_pages.append(url_title)
                 continue
             
             previous_hash = load_previous_hash(hash_file)
             
             if not text:
                 body += "La página descargada no tiene ningún contenido, probablemente haya habido error<br>"
+                error_pages.append(url_title)
             elif previous_hash is None:
                 body += "Primera ejecución, guardando estado actual.<br>"
                 save_current_hash(hash_file, current_hash)
+                first_time_pages.append(url_title)
                 
                 # Notificar que es la primera vez
                 first_time_message = f"ℹ️ PRIMERA MONITORIZACIÓN\n\n📄 {url_title}\n{url}\n\n⚠️ No se ha podido comparar con un punto anterior porque es la primera vez que se monitoriza esta URL.\n\nEl contenido actual se ha guardado como referencia para futuras comparaciones."
@@ -395,6 +402,7 @@ def main(output_root_dir: str):
                 log_change(log_file, url)
                 save_current_hash(hash_file, current_hash)
                 changes_detected = True
+                changed_pages.append(url_title)
                 
                 # Calcular diff
                 previous_text = load_previous_text(data_dir)
@@ -406,13 +414,50 @@ def main(output_root_dir: str):
                     change_details.append(f"\n📄 {url_title}\n{url}\n(No se pudo calcular diff)")
             else:
                 body += "Sin cambios detectados.<br>"
+                unchanged_pages += 1
             
             body += f'<a href="{url}">click aquí</a><br><br>'
+        
+        # Preparar resumen final
+        total_urls = len(URLS)
+        num_changes = len(changed_pages)
+        num_first_time = len(first_time_pages)
+        num_errors = len(error_pages)
+        
+        # Crear mensaje de resumen
+        summary = f"\n{'='*60}\n"
+        summary += f"📊 RESUMEN DE MONITORIZACIÓN\n"
+        summary += f"{'='*60}\n\n"
+        summary += f"📅 Fecha: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+        summary += f"🔗 Total URLs monitorizadas: {total_urls}\n\n"
+        
+        if num_changes > 0:
+            summary += f"🚨 CAMBIOS DETECTADOS: {num_changes} página{'s' if num_changes != 1 else ''}\n"
+            for page in changed_pages:
+                summary += f"   • {page}\n"
+            summary += "\n"
+        else:
+            summary += f"✅ Sin cambios detectados\n\n"
+        
+        summary += f"📄 Sin cambios: {unchanged_pages} página{'s' if unchanged_pages != 1 else ''}\n"
+        
+        if num_first_time > 0:
+            summary += f"ℹ️  Primera monitorización: {num_first_time} página{'s' if num_first_time != 1 else ''}\n"
+            for page in first_time_pages:
+                summary += f"   • {page}\n"
+        
+        if num_errors > 0:
+            summary += f"❌ Errores: {num_errors} página{'s' if num_errors != 1 else ''}\n"
+            for page in error_pages:
+                summary += f"   • {page}\n"
+        
+        summary += f"\n{'='*60}\n"
         
         # Si hay cambios, notificar con el diff por todos los canales
         if changes_detected:
             notification_message = "🚨 CAMBIOS DETECTADOS EN URLS MONITORIZADAS\n\n"
             notification_message += "\n".join(change_details)
+            notification_message += summary
             
             # Enviar por consola y telegram
             console_notifier = ConsoleNotifier(config)
@@ -420,6 +465,47 @@ def main(output_root_dir: str):
             
             console_notifier.send("⚠️ CAMBIOS DETECTADOS - Empleo Público", notification_message)
             telegram_notifier.send("⚠️ CAMBIOS DETECTADOS - Empleo Público", notification_message)
+        else:
+            # Si no hay cambios, enviar solo el resumen
+            console_notifier = ConsoleNotifier(config)
+            telegram_notifier = TelegramNotifier(config)
+            
+            console_notifier.send("✅ Monitorización completada - Sin cambios", summary)
+            telegram_notifier.send("✅ Monitorización completada - Sin cambios", summary)
+        
+        # Añadir resumen al body del email (en formato HTML)
+        body += "<br><br>"
+        body += f"<div style='background-color: #f0f0f0; padding: 15px; border-radius: 5px; font-family: monospace;'>"
+        body += f"<h3>📊 RESUMEN DE MONITORIZACIÓN</h3>"
+        body += f"<p><strong>📅 Fecha:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>"
+        body += f"<p><strong>🔗 Total URLs monitorizadas:</strong> {total_urls}</p>"
+        
+        if num_changes > 0:
+            body += f"<p style='color: red;'><strong>🚨 CAMBIOS DETECTADOS:</strong> {num_changes} página{'s' if num_changes != 1 else ''}</p>"
+            body += "<ul>"
+            for page in changed_pages:
+                body += f"<li>{page}</li>"
+            body += "</ul>"
+        else:
+            body += f"<p style='color: green;'><strong>✅ Sin cambios detectados</strong></p>"
+        
+        body += f"<p><strong>📄 Sin cambios:</strong> {unchanged_pages} página{'s' if unchanged_pages != 1 else ''}</p>"
+        
+        if num_first_time > 0:
+            body += f"<p><strong>ℹ️ Primera monitorización:</strong> {num_first_time} página{'s' if num_first_time != 1 else ''}</p>"
+            body += "<ul>"
+            for page in first_time_pages:
+                body += f"<li>{page}</li>"
+            body += "</ul>"
+        
+        if num_errors > 0:
+            body += f"<p style='color: orange;'><strong>❌ Errores:</strong> {num_errors} página{'s' if num_errors != 1 else ''}</p>"
+            body += "<ul>"
+            for page in error_pages:
+                body += f"<li>{page}</li>"
+            body += "</ul>"
+        
+        body += "</div>"
         
         # Enviar siempre el resumen por email (con o sin cambios)
         email_notifier = EmailNotifier(config)
